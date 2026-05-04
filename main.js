@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
     const lottoNumbersContainer = document.getElementById('lotto-numbers');
+    const themeSwitch = document.getElementById('theme-switch-checkbox');
+    const doc = document.documentElement;
 
     const getNumberColorClass = (number) => {
         if (number <= 10) return 'number-color-1';
@@ -29,8 +31,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const applyTheme = (theme) => {
+        doc.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        themeSwitch.checked = theme === 'dark';
+    };
+
+    const toggleTheme = () => {
+        const currentTheme = doc.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(newTheme);
+    };
+
+    // Load saved theme or use system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else if (prefersDark) {
+        applyTheme('dark');
+    } else {
+        applyTheme('light');
+    }
+    
+    themeSwitch.addEventListener('change', toggleTheme);
     generateBtn.addEventListener('click', generateLottoNumbers);
 
-    // 페이지 로드 시 초기 번호 생성
+    // Initial number generation
     generateLottoNumbers();
 });
